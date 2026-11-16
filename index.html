@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <!-- 1. Diseño responsivo: sin esta línea el móvil encoge la página como si fuera de escritorio -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diseño web responsivo, explicado con ejemplos</title>
+  <style>
+    /* Unidades relativas: todo en rem, así respeta el tamaño de letra del usuario */
+    :root {
+      --tinta: #1a1033;
+      --violeta: #5b2eff;
+      --lavanda: #f4f0ff;
+      --coral: #c2185b;
+      --menta: #007a65;
+      --blanco: #fff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, "Segoe UI", Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--tinta);
+      background: var(--lavanda);
+    }
+    a { color: var(--violeta); }
+    header { background: var(--violeta); color: var(--blanco); padding: 1.5rem 1rem; }
+    header h1 { margin: 0 0 0.5rem; font-size: 1.5rem; }
+    header p { margin: 0; max-width: 40rem; }
+    main { padding: 1rem; max-width: 70rem; margin: 0 auto; }
+    section { background: var(--blanco); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
+    h2 { margin-top: 0; font-size: 1.25rem; color: var(--violeta); }
+    code { background: var(--lavanda); padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.9em; }
+    pre { background: var(--tinta); color: #fff; padding: 0.75rem; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; }
+    pre code { background: none; padding: 0; }
+
+    /* Indicador fijo: muestra el ancho y el punto de corte activo */
+    .medidor {
+      position: sticky; top: 0; z-index: 5;
+      background: var(--tinta); color: #fff;
+      padding: 0.5rem 1rem; font-size: 0.9rem;
+    }
+    .medidor strong { color: #ffc93c; }
+
+    /* 2. Rejilla fluida: auto-fit reparte las columnas según el ancho disponible */
+    .rejilla {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+      gap: 0.75rem;
+    }
+    .caja { background: var(--lavanda); border-radius: 8px; padding: 1rem; text-align: center; font-weight: 600; }
+
+    /* 4. Media queries: reglas que solo se aplican a partir de cierto ancho */
+    .dos-puntos { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
+    .dos-puntos .caja:nth-child(1) { background: #ffd9e1; }
+    .dos-puntos .caja:nth-child(2) { background: #d4f5ee; }
+    .dos-puntos .caja:nth-child(3) { background: #fff0c2; }
+    @media (min-width: 700px)  { .dos-puntos { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1000px) { .dos-puntos { grid-template-columns: repeat(3, 1fr); } }
+
+    /* 3. Unidades relativas: el tamaño de la muestra se controla con rem y % */
+    .muestra-rem { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+    .muestra-rem .bloque { background: var(--violeta); color: #fff; border-radius: 8px; padding: 1rem; }
+    .muestra-rem .b1 { width: 50%; }
+    .muestra-rem .b2 { width: 20rem; max-width: 100%; }
+    label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+    input[type="range"] { width: 100%; max-width: 20rem; }
+
+    /* 5. Contenido adaptable: el menú cambia de forma según el ancho */
+    nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+    nav a { display: block; background: var(--lavanda); padding: 0.6rem 1rem; border-radius: 8px; text-decoration: none; }
+    @media (min-width: 700px) {
+      nav ul { flex-direction: row; }
+    }
+    .solo-movil { display: block; }
+    .solo-grande { display: none; }
+    @media (min-width: 700px) {
+      .solo-movil { display: none; }
+      .solo-grande { display: block; }
+    }
+
+    /* 6. Imágenes flexibles: nunca se salen de su caja y mantienen la proporción */
+    .imagen-flexible { max-width: 100%; height: auto; display: block; border-radius: 8px; }
+
+    footer { text-align: center; padding: 1rem; font-size: 0.9rem; }
+    :focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <div class="medidor" role="status">
+    Ancho de la ventana: <strong id="ancho">…</strong> px ·
+    Punto de corte activo: <strong id="corte">…</strong>
+  </div>
+
+  <header>
+    <h1>Diseño web responsivo, explicado con ejemplos</h1>
+    <p>Haz la ventana del navegador más estrecha y más ancha, y mira cómo cambia cada ejemplo. Debajo de cada demostración está el código que lo hace posible.</p>
+  </header>
+
+  <main>
+    <section aria-labelledby="t1">
+      <h2 id="t1">1. Diseño responsivo (mobile first)</h2>
+      <p>Se diseña primero para el móvil y se amplía para pantallas grandes. Para que el móvil no encoja la página, el HTML lleva esta línea dentro de <code>&lt;head&gt;</code>:</p>
+      <pre><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</code></pre>
+    </section>
+
+    <section aria-labelledby="t2">
+      <h2 id="t2">2. Rejillas fluidas</h2>
+      <p>Las cajas se reparten el ancho disponible. Con <code>auto-fit</code> y <code>minmax</code> el navegador decide cuántas columnas caben.</p>
+      <div class="rejilla">
+        <div class="caja">Caja 1</div><div class="caja">Caja 2</div><div class="caja">Caja 3</div>
+        <div class="caja">Caja 4</div><div class="caja">Caja 5</div><div class="caja">Caja 6</div>
+      </div>
+      <pre><code>.rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.75rem;
+}</code></pre>
+    </section>
+
+    <section aria-labelledby="t3">
+      <h2 id="t3">3. Unidades relativas (%, rem, fr)</h2>
+      <p>Los tamaños no son píxeles fijos. El porcentaje depende de la caja que lo contiene y <code>rem</code> depende del tamaño de letra del navegador. Mueve el control y observa cómo todo se adapta.</p>
+      <label for="letra">Tamaño de letra de la muestra: <span id="letra-valor">100</span> %</label>
+      <input type="range" id="letra" min="80" max="200" value="100" step="10">
+      <div class="muestra-rem" id="muestra">
+        <div class="bloque b1">Ancho 50 %</div>
+        <div class="bloque b2">Ancho 20 rem (máximo 100 %)</div>
+      </div>
+      <pre><code>.b1 { width: 50%; }
+.b2 { width: 20rem; max-width: 100%; }
+body { font-size: 1rem; }</code></pre>
+    </section>
+
+    <section aria-labelledby="t4">
+      <h2 id="t4">4. Media queries</h2>
+      <p>Son reglas que solo se aplican a partir de cierto ancho. Aquí hay dos puntos de corte, 700 px y 1000 px.</p>
+      <div class="dos-puntos">
+        <div class="caja">Columna A</div><div class="caja">Columna B</div><div class="caja">Columna C</div>
+      </div>
+      <pre><code>.dos-puntos { grid-template-columns: 1fr; }
+@media (min-width: 700px)  { .dos-puntos { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1000px) { .dos-puntos { grid-template-columns: repeat(3, 1fr); } }</code></pre>
+    </section>
+
+    <section aria-labelledby="t5">
+      <h2 id="t5">5. Contenido adaptable</h2>
+      <p>No solo cambian las columnas, también cambia la forma del contenido. El menú es vertical en móvil y horizontal en pantallas grandes, y el mensaje de abajo es distinto en cada caso.</p>
+      <nav aria-label="Menú de ejemplo">
+        <ul>
+          <li><a href="#t1">Inicio</a></li>
+          <li><a href="#t4">Puntos de corte</a></li>
+          <li><a href="#t6">Imágenes</a></li>
+        </ul>
+      </nav>
+      <p class="solo-movil"><strong>Estás en una pantalla estrecha:</strong> el menú va en vertical.</p>
+      <p class="solo-grande"><strong>Estás en una pantalla ancha:</strong> el menú va en horizontal.</p>
+      <pre><code>nav ul { display: flex; flex-direction: column; }
+@media (min-width: 700px) { nav ul { flex-direction: row; } }</code></pre>
+    </section>
+
+    <section aria-labelledby="t6">
+      <h2 id="t6">6. Imágenes flexibles</h2>
+      <p>Esta imagen mide 800 px de ancho, pero nunca se sale de su caja y conserva su proporción.</p>
+      <svg class="imagen-flexible" viewBox="0 0 800 300" role="img" aria-label="Paisaje sencillo con sol y montañas">
+        <rect width="800" height="300" fill="#bfe3ff"/>
+        <circle cx="650" cy="80" r="45" fill="#ffc93c"/>
+        <polygon points="0,300 200,100 400,300" fill="#5b2eff"/>
+        <polygon points="250,300 500,60 800,300" fill="#7c5cff"/>
+      </svg>
+      <pre><code>img { max-width: 100%; height: auto; }</code></pre>
+    </section>
+  </main>
+
+  <footer>Actividad práctica de HCI: Desarrollo Web y Móvil · Publicada con GitHub Pages</footer>
+
+  <script>
+    // Indicador de ancho y de punto de corte
+    var ancho = document.getElementById("ancho");
+    var corte = document.getElementById("corte");
+    function medir() {
+      var w = window.innerWidth;
+      ancho.textContent = w;
+      corte.textContent = w >= 1000 ? "1000 px o más (3 columnas)"
+        : w >= 700 ? "700 a 999 px (2 columnas)"
+        : "menos de 700 px (1 columna)";
+    }
+    window.addEventListener("resize", medir);
+    medir();
+
+    // Control de tamaño de letra de la muestra de unidades relativas
+    var letra = document.getElementById("letra");
+    var valor = document.getElementById("letra-valor");
+    var muestra = document.getElementById("muestra");
+    letra.addEventListener("input", function () {
+      valor.textContent = letra.value;
+      muestra.style.fontSize = letra.value / 100 + "rem";
+    });
+  </script>
+</body>
+</html>
